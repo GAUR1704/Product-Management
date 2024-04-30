@@ -16,4 +16,18 @@ public interface ProductService {
 	
 	public void deleteProductById(long id);
 
+	public List<Product> getAllProductsWithCatagoryAndPrice(String catagory, double price);
+	
+	public List<Product> getAllProductsWithCatagoryOrPrice(String catagory, double price);
+
+	public List<Product> getAllProductsNameStartingWith(String startingWith);
+
+	public Integer getProductCountByCatagory(String catagory);
+
+	public boolean getProductExistCatagory(String catagory);
+
+	public List<Product> getAllProductsWithinPriceRange(double minPrice, double maxPrice);
+
+
+
 }

@@ -27,13 +27,13 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(nullable = false)
     private String name;
     @Column
     private String description;
-    @Column
+    @Column(nullable = false)
     private double price;
-    @Column
+    @Column(nullable = false)
     private String catagory;
     
     @CreationTimestamp

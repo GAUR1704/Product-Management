@@ -16,5 +16,6 @@ public class ErrorResponse {
 	private String cause;
 	private int statusCode;
 	private String description;
+	private String timestamp;
 
 }
