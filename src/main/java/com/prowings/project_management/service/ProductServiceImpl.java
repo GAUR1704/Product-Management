@@ -12,99 +12,87 @@ import com.prowings.project_management.exception.InvalidProductDetailsException;
 import com.prowings.project_management.exception.ProductDeletionFailedException;
 import com.prowings.project_management.exception.ProductNotFoundException;
 
-
-
 @Service
 public class ProductServiceImpl implements ProductService {
 
-	@Autowired
-	private ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-	@Override
-	public Product getProductById(long id) {
+    @Override
+    public Product getProductById(long id) {
+        Optional<Product> opt = productRepository.findById(id);
+        if (opt.isPresent()) {
+            return opt.get();
+        } else {
+            throw new ProductNotFoundException("Product of specified ID is not present in System!!");
+        }
+    }
 
-		Optional<Product> opt = productRepository.findById(id);
-		if (opt.isPresent())
-			return opt.get();
-		else
-			throw new ProductNotFoundException("Product of specified ID is not present in System!!");
+    @Override
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 
-	}
+    @Override
+    public String saveProduct(Product product) {
+        if (validProduct(product)) {
+            productRepository.save(product);
+            return "Product saved successfully";
+        } else {
+            throw new InvalidProductDetailsException("Product details are not valid!!");
+        }
+    }
 
-	@Override
-	public List<Product> getAllProducts() {
+    private boolean validProduct(Product product) {
+        if (product.getName().length() < 5) {
+            throw new InvalidProductDetailsException("Product Name is not valid!!");
+        } else if (product.getPrice() < 100) {
+            throw new InvalidProductDetailsException("Product price must be greater than 100");
+        } else {
+            return true;
+        }
+    }
 
-		return productRepository.findAll();
-	}
+    @Override
+    public Product updateProduct(Product product) {
+        return productRepository.save(product);
+    }
 
-	@Override
-	public String saveProduct(Product product) {
-		if (validProduct(product))
+    @Override
+    public void deleteProductById(long id) {
+        if (!productRepository.existsById(id)) {
+            throw new ProductDeletionFailedException("Product with id " + id + " not found in database.");
+        }
+        productRepository.deleteById(id);
+    }
 
-			productRepository.save(product);
+    @Override
+    public List<Product> getAllProductsWithCatagoryAndPrice(String catagory, double price) {
+        return productRepository.findByCatagoryAndPrice(catagory, price);
+    }
 
-		return "Product saved successfully";
+    @Override
+    public List<Product> getAllProductsWithCatagoryOrPrice(String catagory, double price) {
+        return productRepository.findByCatagoryOrPrice(catagory, price);
+    }
 
-	}
+    @Override
+    public List<Product> getAllProductsNameStartingWith(String startingWith) {
+        return productRepository.findByNameStartingWith(startingWith);
+    }
 
-	private boolean validProduct(Product product) {
+    @Override
+    public Integer getProductCountByCatagory(String catagory) {
+        return productRepository.countByCatagory(catagory);
+    }
 
-		if (product.getName().length() < 5)
-			throw new InvalidProductDetailsException("Product Name is not valid!!");
-		else if (product.getPrice() < 100)
-			throw new InvalidProductDetailsException("Product price must be greater than 100");
-		else
-			return true;
+    @Override
+    public boolean getProductExistCatagory(String catagory) {
+        return productRepository.existsByCatagory(catagory);
+    }
 
-	}
-
-	@Override
-	public Product updateProduct(Product product) {
-		return productRepository.save(product);
-	}
-
-	@Override
-	public void deleteProductById(long id) {
-		if (!productRepository.existsById(id)) {
-
-			throw new ProductDeletionFailedException("Product with id " + id + " not found in database.");
-		}
-		productRepository.deleteById(id);
-	}
-
-	@Override
-	public List<Product> getAllProductsWithCatagoryAndPrice(String catagory, double price) {
-
-		return productRepository.findByCatagoryAndPrice(catagory, price);
-	}
-
-	@Override
-	public List<Product> getAllProductsWithCatagoryOrPrice(String catagory, double price) {
-
-		return productRepository.findByCatagoryOrPrice(catagory, price);
-	}
-
-	@Override
-	public List<Product> getAllProductsNameStartingWith(String startingWith) {
-		return productRepository.findByNameStartingWith(startingWith);
-	}
-
-	@Override
-	public Integer getProductCountByCatagory(String catagory) {
-		return productRepository.countByCatagory(catagory);
-	}
-
-	@Override
-	public boolean getProductExistCatagory(String catagory) {
-		return productRepository.existsByCatagory(catagory);
-	}
-
-	@Override
-	public List<Product> getAllProductsWithinPriceRange(double minPrice, double maxPrice) {
-		return productRepository.findByPriceBetween(minPrice, maxPrice);
-	}
-
-	
-	
-
+    @Override
+    public List<Product> getAllProductsWithinPriceRange(double minPrice, double maxPrice) {
+        return productRepository.findByPriceBetween(minPrice, maxPrice);
+    }
 }

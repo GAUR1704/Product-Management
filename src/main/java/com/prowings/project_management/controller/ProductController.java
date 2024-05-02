@@ -3,87 +3,84 @@ package com.prowings.project_management.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.prowings.project_management.entity.Product;
 import com.prowings.project_management.service.ProductService;
-
-
-
 
 @RestController
 public class ProductController {
 
-	@Autowired
-	ProductService productService;
+    @Autowired
+    ProductService productService;
 
-	@GetMapping("/products/{id}")
-	public Product getProduct(@PathVariable int id) {
-		return productService.getProductById(id);
-	}
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Product> getProduct(@PathVariable int id) {
+        Product product = productService.getProductById(id);
+        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
+    }
 
-	@GetMapping("/products")
-	public List<Product> getAllProducts() {
-		return productService.getAllProducts();
-	}
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
 
-	@PostMapping("/products")
-	public String saveProduct(@RequestBody Product product) {
-		return productService.saveProduct(product);
-	}
+    @PostMapping("/products")
+    public ResponseEntity<String> saveProduct(@RequestBody Product product) {
+        String savedProductId = productService.saveProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProductId);
+    }
 
-	@DeleteMapping("/products/{id}")
-	public void deleteProduct(@PathVariable int id) {
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
+        productService.deleteProductById(id);
+        return ResponseEntity.noContent().build();
+    }
 
-		productService.deleteProductById(id);
+    @GetMapping("/products/catagory")
+    public ResponseEntity<List<Product>> getAllProductsWithCatagoryAndPrice(@RequestParam String catagory, @RequestParam double price) {
+        List<Product> products = productService.getAllProductsWithCatagoryAndPrice(catagory, price);
+        return ResponseEntity.ok(products);
+    }
 
-	}
-	
-	@GetMapping("/products/catagory")
-	public List<Product> getAllProductsWithCatagoryAndPrice(@RequestParam String catagory, @RequestParam double price){
-		
-		return productService.getAllProductsWithCatagoryAndPrice(catagory, price);
-		
-	}
-	
-	@GetMapping("/products/cat")
-	public List<Product> getAllProductsWithCatagoryOrPrice(@RequestParam String catagory, @RequestParam double price){
-		
-		return productService.getAllProductsWithCatagoryOrPrice(catagory, price);
-		
-	}
-	
-	@GetMapping("/products/startingwith/{startingWith}")
-	public List<Product> getAllProductsWithCatagoryAndPrice(@PathVariable String startingWith){
-		
-		return productService.getAllProductsNameStartingWith(startingWith);
-	}
-	
-	@GetMapping("/products/catagory/count/{catagory}")
-	public Integer getProductCountByCatagory(@PathVariable String catagory) {
-		
-		return productService.getProductCountByCatagory(catagory);
-	}
-	
-	@GetMapping("/products/catagory/exist/{catagory}")
-	public boolean getProductExistCatagory(@PathVariable String catagory) {
-		
-		return productService.getProductExistCatagory(catagory);
-		
-	}
-	
-	@GetMapping("/products/withinPriceRange")
-	public List<Product> getAllProductsWithinPriceRange(@RequestParam double minPrice, @RequestParam double maxPrice)
-	{
-		return productService.getAllProductsWithinPriceRange(minPrice, maxPrice);
-	}
-	
-	
-	
+    @GetMapping("/products/cat")
+    public ResponseEntity<List<Product>> getAllProductsWithCatagoryOrPrice(@RequestParam String catagory, @RequestParam double price) {
+        List<Product> products = productService.getAllProductsWithCatagoryOrPrice(catagory, price);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/products/startingwith/{startingWith}")
+    public ResponseEntity<List<Product>> getAllProductsWithCatagoryAndPrice(@PathVariable String startingWith) {
+        List<Product> products = productService.getAllProductsNameStartingWith(startingWith);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/products/catagory/count/{catagory}")
+    public ResponseEntity<Integer> getProductCountByCatagory(@PathVariable String catagory) {
+        Integer count = productService.getProductCountByCatagory(catagory);
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/products/catagory/exist/{catagory}")
+    public ResponseEntity<Boolean> getProductExistCatagory(@PathVariable String catagory) {
+        boolean exists = productService.getProductExistCatagory(catagory);
+        return ResponseEntity.ok(exists);
+    }
+
+    @GetMapping("/products/withinPriceRange")
+    public ResponseEntity<List<Product>> getAllProductsWithinPriceRange(@RequestParam double minPrice, @RequestParam double maxPrice) {
+        List<Product> products = productService.getAllProductsWithinPriceRange(minPrice, maxPrice);
+        return ResponseEntity.ok(products);
+    }
+
+//    @GetMapping("/products/page")
+//    public ResponseEntity<Page<Product>> getProductsPagination(@RequestParam(defaultValue = "0") int page,
+//                                                                @RequestParam(defaultValue = "3") int size) {
+//        PageRequest pageable = PageRequest.of(page, size);
+//        Page<Product> productPage = productService.getAllProductsPagination(pageable);
+//        return ResponseEntity.ok(productPage);
+//    }
+
 }
