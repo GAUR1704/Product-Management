@@ -14,10 +14,12 @@ public class LoggingAspect {
     	
         long startTime = System.currentTimeMillis();
 
+        System.out.println("Call recieved to " + joinPoint.getSignature().toShortString() + " method");
+        
         try {
             Object result = joinPoint.proceed();
             
-            long endTime = System.currentTimeMillis();
+           long endTime = System.currentTimeMillis();
             
             System.out.println("Method " + joinPoint.getSignature().toShortString() + " executed in " + (endTime - startTime) + "ms");
             
@@ -25,7 +27,7 @@ public class LoggingAspect {
             
         } catch (Throwable e) {
         	
-            long endTime = System.currentTimeMillis();
+           long endTime = System.currentTimeMillis();
             
             System.out.println("Method " + joinPoint.getSignature().toShortString() + " failed after " + (endTime - startTime) + "ms");
             
