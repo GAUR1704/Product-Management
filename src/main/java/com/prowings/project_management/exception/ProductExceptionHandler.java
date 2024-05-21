@@ -77,6 +77,26 @@ public class ProductExceptionHandler {
 		
 	}
 	
+	@ExceptionHandler(ProductUpdateFailedException.class)
+	public ResponseEntity<ErrorResponse> handleProductUpdateFailedException(WebRequest webRequest, Exception ex){
+		
+		System.out.println("Inside handleProductDeletionFailedException() handler method ");
+		ErrorResponse error = new ErrorResponse();
+		error.setCause(ex.getMessage());
+		error.setStatusCode(400);
+		error.setDescription("The root cause of this is : "+ex.getMessage());
+		
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+		error.setTimestamp(now.format(formatter));
+		
+		String reqUrl = webRequest.getContextPath();
+		System.out.println(reqUrl);
+		
+		return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		
+	}
+	
 	
 
 }

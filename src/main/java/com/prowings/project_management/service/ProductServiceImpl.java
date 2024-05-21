@@ -11,6 +11,7 @@ import com.prowings.project_management.entity.Product;
 import com.prowings.project_management.exception.InvalidProductDetailsException;
 import com.prowings.project_management.exception.ProductDeletionFailedException;
 import com.prowings.project_management.exception.ProductNotFoundException;
+import com.prowings.project_management.exception.ProductUpdateFailedException;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -20,6 +21,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(long id) {
+    	System.out.println("inside impl");
         Optional<Product> opt = productRepository.findById(id);
         if (opt.isPresent()) {
             return opt.get();
@@ -54,15 +56,30 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(Product product) {
-        return productRepository.save(product);
+    public Product updateProduct(long id, Product product) {
+    	
+        Product existingProductOptional = productRepository.findById(id).orElse(null);
+        
+        if (existingProductOptional != null) {
+        	
+        	existingProductOptional.setName(product.getName());
+        	existingProductOptional.setPrice(product.getPrice());
+        	existingProductOptional.setCatagory(product.getCatagory());
+            
+            return productRepository.save(existingProductOptional);
+            
+        } else 
+            throw new ProductUpdateFailedException("Product with id " + id + " not found in database, So updation can't be done.");
+        
     }
 
     @Override
     public void deleteProductById(long id) {
-        if (!productRepository.existsById(id)) {
+    	
+        if (!productRepository.existsById(id))
+        	
             throw new ProductDeletionFailedException("Product with id " + id + " not found in database.");
-        }
+        
         productRepository.deleteById(id);
     }
 

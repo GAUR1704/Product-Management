@@ -11,3 +11,5 @@ public class ProductManagementApplication {
 	}
 
 }
+
+// http://localhost:8084/product-management/swagger-ui/index.html

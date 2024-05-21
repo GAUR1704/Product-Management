@@ -12,7 +12,7 @@ public interface ProductService {
 
 	public String saveProduct(Product product);
 
-	public Product updateProduct(Product product);
+	public Product updateProduct(long id, Product product);
 	
 	public void deleteProductById(long id);
 
@@ -27,6 +27,7 @@ public interface ProductService {
 	public boolean getProductExistCatagory(String catagory);
 
 	public List<Product> getAllProductsWithinPriceRange(double minPrice, double maxPrice);
+
 
 
 
